@@ -18,14 +18,14 @@
     "body-parser": "^1.10.1",
     "compression": "^1.4.3",
     "express": "^4.10.7",
-    "underscore": "^1.7.0"
+    "underscore": "^1.7.0",
+    "babel-runtime": "^5.7.0"
   },
   "bugs": {
     "url": "https://github.com/nxus/router-express/issues"
   },
   "homepage": "https://github.com/nxus/router-express",
   "devDependencies": {
-    "babel": "^5.6.23",
-    "babel-runtime": "^5.7.0"
+    "babel": "^5.6.23"
   }
 }
