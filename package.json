@@ -1,6 +1,6 @@
 {
   "name": "@nxus/router-express",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An express-based router for Nxus",
   "main": "index.js",
   "scripts": {
