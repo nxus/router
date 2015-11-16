@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2015-07-16
+* @Last Modified 2015-11-09
 */
 
 'use strict';
@@ -37,7 +37,7 @@ class Router {
      * Plugin Methods
      */
 
-    app.on('app.startup.after', () => {
+    app.on('app.launch', () => {
         app.log('Starting app on port:', this.port);
         this.server = this.expressApp.listen(this.port);
     })
@@ -105,6 +105,7 @@ class Router {
      * Setters
      */
 
+    app.on('router.setAssets', this._setAssets.bind(this));
     app.on('router.setStatic', this._setStatic.bind(this));
 
     app.on('router.setRoute', this._setRoute.bind(this));
@@ -119,8 +120,12 @@ class Router {
   }
 
   
-  _setRoute (route, handler, method) {
-    method = method || 'use'
+  _setRoute (method, route, handler) {
+    if(!handler) {
+      handler = route
+      route = method
+      method = 'use'
+    }
     
     if(_.isString(route)) {
       this.routeTable[route] = handler
@@ -131,8 +136,13 @@ class Router {
       
   }
 
-  _setStatic (path, subPrefix) {
-    app.log.debug('setting-static', subPrefix)
+  _setStatic (prefix, path) {
+    app.log.debug('setting-static', prefix)
+    this.expressApp.use(prefix, express.static(path))
+  } 
+
+  _setAssets (subPrefix, path) {
+    app.log.debug('setting-assets', subPrefix)
     var prefix = "/assets"
     if(subPrefix)
       prefix += subPrefix
@@ -140,4 +150,4 @@ class Router {
   }
 }
 
-module.exports = Router
+export default Router
