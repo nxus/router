@@ -1,10 +1,12 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2015-11-09
+* @Last Modified 2015-11-24
 */
 
 'use strict';
+
+require('babel-runtime/core-js/promise').default = require('bluebird');
 
 var util = require('util')
 var express = require('express');
@@ -12,64 +14,39 @@ var _ = require('underscore');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 
-var app;
-
 class Router {
 
-  constructor (a) {
-    app = a;
+  constructor (app) {
 
     this.port = app.config.PORT || 3001
     this.routeTable = {}
 
-    this.expressApp = express()
+    this._setupExpress()
 
-    //Setup express app
-    this.expressApp.use(compression())
-    this.expressApp.use(bodyParser.urlencoded({ extended: false }));
-    this.expressApp.use(bodyParser.json());
-    this.expressApp.use(function(req, res, next) {
-      res.set('Connection', 'close'); //need to turn this off on production environments
-      next();
-    })
-
-    /*
-     * Plugin Methods
-     */
-
-    app.on('app.launch', () => {
+    app.on('launch').then(() => {
         app.log('Starting app on port:', this.port);
         this.server = this.expressApp.listen(this.port);
     })
 
-    app.on('app.stop', () => {
+    app.on('stop').then(() => {
       if (this.server) {
         app.log('Shutting down app on port:', this.port);
         this.server.close();
       }
     })
-
-    this._setupGatherers()
-    this._setupGetters()
-    this._setupSetters()
+    
+    app.get('router').gather('middleware').each(this._setRoute.bind(this))
+    .then(() => {return app.get('router').gather('static').each(this._setStatic.bind(this))})
+    .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
+     
+    this._setupGetters(app)
+    this._setupSetters(app)
+    this._setupError(app)
   }
 
-  _setupGatherers() {
-    /* 
-     * Gatherers
-     */
-
-    app.on('app.startup.before', () => {
-      app.emit('router.gatherMiddleware', this._setRoute.bind(this));
-      app.emit('router.gatherStatic', this._setStatic.bind(this));
-    })
-
-    app.on('app.startup', () => {
-      app.emit('router.gatherRoutes', this._setRoute.bind(this));
-    })
-
+  _setupError(app) {
     if (process.env.NODE_ENV == "production") {
-      app.on('app.startup.after', () => {
+      app.on('startup.after').then(() => {
         this.expressApp.use(function errorHandler(err, req, res, next) {
           app.log.error(
             'HTTP 500 error serving request\n\n',
@@ -86,35 +63,48 @@ class Router {
     }
   }
 
-  _setupGetters() {
+  _setupExpress() {
+    this.expressApp = express()
+
+    //Setup express app
+    this.expressApp.use(compression())
+    this.expressApp.use(bodyParser.urlencoded({ extended: false }));
+    this.expressApp.use(bodyParser.json());
+    this.expressApp.use((req, res, next) => {
+      res.set('Connection', 'close'); //need to turn this off on production environments
+      next();
+    })
+  }
+
+  _setupGetters(app) {
     /*
      * Getters
      */
 
-    app.on('router.getRoutes', (handler) => {
+    app.get('router').on('getRoutes').then((handler) => {
       handler(this.routeTable);
     })
 
-    app.on('router.getExpressApp', (handler) => {
+    app.get('router').on('getExpressApp', (handler) => {
       handler(this.expressApp);
     })
   }
 
-  _setupSetters() {
+  _setupSetters(app) {
     /*
      * Setters
      */
 
-    app.on('router.setAssets', this._setAssets.bind(this));
-    app.on('router.setStatic', this._setStatic.bind(this));
+    app.get('router').on('setAssets').then(this._setAssets.bind(this));
+    app.get('router').on('setStatic').then(this._setStatic.bind(this));
 
-    app.on('router.setRoute', this._setRoute.bind(this));
+    app.get('router').on('setRoute').then(this._setRoute.bind(this));
 
-    app.on('router.setRoute.get', function (route, handler) {
+    app.get('router').on('setRoute.get').then((route, handler) => {
       _setRoute(route, handler, 'get');
     })
 
-    app.on('router.setRoute.post', function (route, handler) {
+    app.get('router').on('setRoute.post').then((route, handler) => {
       _setRoute(route, handler, 'post');
     })
   }
