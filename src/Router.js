@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2015-11-24
+* @Last Modified 2015-12-01
 */
 
 'use strict';
@@ -35,9 +35,12 @@ class Router {
       }
     })
     
-    app.get('router').gather('middleware').each(this._setRoute.bind(this))
-    .then(() => {return app.get('router').gather('static').each(this._setStatic.bind(this))})
-    .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
+    app.on('startup').then(() => {
+      app.get('router').gather('middleware').each(this._setRoute.bind(this))
+      .then(() => {return app.get('router').gather('static').each(this._setStatic.bind(this))})
+      .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
+      .then(() => {return app.get('router').gather('asset').each(this._setAssets.bind(this))})
+    })
      
     this._setupGetters(app)
     this._setupSetters(app)
@@ -111,6 +114,8 @@ class Router {
 
   
   _setRoute (method, route, handler) {
+    if(_.isArray(method))
+      [method, route, handler] = method
     if(!handler) {
       handler = route
       route = method
@@ -127,11 +132,15 @@ class Router {
   }
 
   _setStatic (prefix, path) {
+    if(_.isArray(prefix))
+      [prefix, path] = prefix
     app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
 
   _setAssets (subPrefix, path) {
+    if(_.isArray(subPrefix))
+      [subPrefix, path] = subPrefix
     app.log.debug('setting-assets', subPrefix)
     var prefix = "/assets"
     if(subPrefix)
