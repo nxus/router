@@ -23,19 +23,19 @@ class Router {
 
     this._setupExpress()
 
-    app.on('launch').then(() => {
+    app.once('launch', () => {
         app.log('Starting app on port:', this.port);
         this.server = this.expressApp.listen(this.port);
     })
 
-    app.on('stop').then(() => {
+    app.on('stop', () => {
       if (this.server) {
         app.log('Shutting down app on port:', this.port);
         this.server.close();
       }
     })
     
-    app.on('startup').then(() => {
+    app.once('startup', () => {
       app.get('router').gather('middleware').each(this._setRoute.bind(this))
       .then(() => {return app.get('router').gather('static').each(this._setStatic.bind(this))})
       .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
@@ -49,7 +49,7 @@ class Router {
 
   _setupError(app) {
     if (process.env.NODE_ENV == "production") {
-      app.on('startup.after').then(() => {
+      app.once('startup.after', () => {
         this.expressApp.use(function errorHandler(err, req, res, next) {
           app.log.error(
             'HTTP 500 error serving request\n\n',
