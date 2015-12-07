@@ -28,7 +28,7 @@ class Router {
         this.server = this.expressApp.listen(this.port);
     })
 
-    app.on('stop', () => {
+    app.once('stop', () => {
       if (this.server) {
         app.log('Shutting down app on port:', this.port);
         this.server.close();
@@ -41,10 +41,11 @@ class Router {
       .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
       .then(() => {return app.get('router').gather('asset').each(this._setAssets.bind(this))})
     })
-     
-    this._setupGetters(app)
-    this._setupSetters(app)
-    this._setupError(app)
+    app.once('load', () => {
+      this._setupGetters(app)
+      this._setupSetters(app)
+      this._setupError(app)
+    });
   }
 
   _setupError(app) {
@@ -84,7 +85,7 @@ class Router {
      * Getters
      */
 
-    app.get('router').on('getRoutes').then((handler) => {
+    app.get('router').on('getRoutes', (handler) => {
       handler(this.routeTable);
     })
 
@@ -98,18 +99,18 @@ class Router {
      * Setters
      */
 
-    app.get('router').on('setAssets').then(this._setAssets.bind(this));
-    app.get('router').on('setStatic').then(this._setStatic.bind(this));
+    app.get('router').on('setAssets', this._setAssets.bind(this));
+    app.get('router').on('setStatic', this._setStatic.bind(this));
 
-    app.get('router').on('setRoute').then(this._setRoute.bind(this));
+    app.get('router').on('setRoute', this._setRoute.bind(this));
 
-    app.get('router').on('setRoute.get').then((route, handler) => {
+    app.get('router').on('setRoute.get', (route, handler) => {
       _setRoute(route, handler, 'get');
-    })
+    });
 
-    app.get('router').on('setRoute.post').then((route, handler) => {
+    app.get('router').on('setRoute.post', (route, handler) => {
       _setRoute(route, handler, 'post');
-    })
+    });
   }
 
   
