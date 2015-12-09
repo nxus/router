@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2015-12-01
+* @Last Modified 2015-12-08
 */
 
 'use strict';
@@ -17,7 +17,7 @@ var compression = require('compression');
 class Router {
 
   constructor (app) {
-
+    this.app = app
     this.port = app.config.PORT || 3001
     this.routeTable = {}
 
@@ -135,7 +135,7 @@ class Router {
   _setStatic (prefix, path) {
     if(_.isArray(prefix))
       [prefix, path] = prefix
-    app.log.debug('setting-static', prefix)
+    this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
 
