@@ -35,12 +35,11 @@ class Router {
       }
     })
     
-    app.once('startup', () => {
-      app.get('router').gather('middleware', this._setRoute.bind(this))
-      app.get('router').gather('static', this._setStatic.bind(this));
-      app.get('router').gather('route', this._setRoute.bind(this));
-      app.get('router').gather('asset', this._setAssets.bind(this));
-    })
+    app.get('router').gather('middleware', this._setRoute.bind(this))
+    app.get('router').gather('static', this._setStatic.bind(this));
+    app.get('router').gather('route', this._setRoute.bind(this));
+    app.get('router').gather('asset', this._setAssets.bind(this));
+
     app.once('load', () => {
       this._setupGetters(app)
       this._setupSetters(app)
@@ -105,23 +104,22 @@ class Router {
     app.get('router').respond('setRoute', this._setRoute.bind(this));
 
     app.get('router').respond('setRoute.get', (route, handler) => {
-      _setRoute(route, handler, 'get');
+      _setRoute('GET', route, handler);
     });
 
     app.get('router').respond('setRoute.post', (route, handler) => {
-      _setRoute(route, handler, 'post');
+      _setRoute('POST', route, handler);
     });
   }
 
   
   _setRoute (method, route, handler) {
-    if(_.isArray(method))
-      [method, route, handler] = method
     if(!handler) {
       handler = route
       route = method
       method = 'use'
     }
+    method = method.toLowerCase();
 
     if(_.isString(route)) {
       this.routeTable[route] = handler
@@ -133,15 +131,11 @@ class Router {
   }
 
   _setStatic (prefix, path) {
-    if(_.isArray(prefix))
-      [prefix, path] = prefix
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
 
   _setAssets (subPrefix, path) {
-    if(_.isArray(subPrefix))
-      [subPrefix, path] = subPrefix
     app.log.debug('setting-assets', subPrefix)
     var prefix = "/assets"
     if(subPrefix)
