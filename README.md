@@ -15,7 +15,7 @@ In your Nxus application:
 ### Defining a route
 
 ```
-app.get('router').send('route').with('/', (req, res) => {
+app.get('router').provide('route', '/', (req, res) => {
   res.send('Hello World')
 })
 ```
@@ -23,7 +23,7 @@ app.get('router').send('route').with('/', (req, res) => {
 Alternatively, you can specify a HTTP method:
 
 ```
-app.get('router').send('route').with('GET', '/', (req, res) => {
+app.get('router').provide('route', 'GET', '/', (req, res) => {
   res.send('Hello World')
 })
 ```
@@ -31,7 +31,7 @@ app.get('router').send('route').with('GET', '/', (req, res) => {
 ### Adding Express/connect middleware
 
 ```
-app.get('router').send('middleware').with((req, res) => {
+app.get('router').provide('middleware', (req, res) => {
   res.status(404).send('Nothing to see here');
 })
 ```
@@ -39,7 +39,7 @@ app.get('router').send('middleware').with((req, res) => {
 ### Adding static files/directories
 
 ```
-app.get('router').send('static').with("my-prefix", myPath)
+app.get('router').provide('static', "my-prefix", myPath)
 ```
 
 For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/myFile.txt`
@@ -47,7 +47,7 @@ For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/m
 ### Adding assets
 
 ```
-app.get('router').send('static').with("my-sub-prifix", myPath)
+app.get('router').provide('asset', "my-sub-prifix", myPath)
 ```
 
 For example, `myFile.txt` in `myPath` is then available at the url `/assets/my-sub-prefix/myFile.txt`
