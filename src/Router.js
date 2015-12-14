@@ -36,10 +36,10 @@ class Router {
     })
     
     app.once('startup', () => {
-      app.get('router').gather('middleware').each(this._setRoute.bind(this))
-      .then(() => {return app.get('router').gather('static').each(this._setStatic.bind(this))})
-      .then(() => {return app.get('router').gather('route').each(this._setRoute.bind(this))})
-      .then(() => {return app.get('router').gather('asset').each(this._setAssets.bind(this))})
+      app.get('router').gather('middleware', this._setRoute.bind(this))
+      app.get('router').gather('static', this._setStatic.bind(this));
+      app.get('router').gather('route', this._setRoute.bind(this));
+      app.get('router').gather('asset', this._setAssets.bind(this));
     })
     app.once('load', () => {
       this._setupGetters(app)
@@ -50,7 +50,7 @@ class Router {
 
   _setupError(app) {
     if (process.env.NODE_ENV == "production") {
-      app.once('startup.after', () => {
+      app.onceAfter('startup', () => {
         this.expressApp.use(function errorHandler(err, req, res, next) {
           app.log.error(
             'HTTP 500 error serving request\n\n',
@@ -85,12 +85,12 @@ class Router {
      * Getters
      */
 
-    app.get('router').on('getRoutes', (handler) => {
-      handler(this.routeTable);
+    app.get('router').respond('getRoutes', () => {
+      return this.routeTable;
     })
 
-    app.get('router').on('getExpressApp', (handler) => {
-      handler(this.expressApp);
+    app.get('router').respond('getExpressApp', () => {
+      return this.expressApp;
     })
   }
 
@@ -99,16 +99,16 @@ class Router {
      * Setters
      */
 
-    app.get('router').on('setAssets', this._setAssets.bind(this));
-    app.get('router').on('setStatic', this._setStatic.bind(this));
+    app.get('router').respond('setAssets', this._setAssets.bind(this));
+    app.get('router').respond('setStatic', this._setStatic.bind(this));
 
-    app.get('router').on('setRoute', this._setRoute.bind(this));
+    app.get('router').respond('setRoute', this._setRoute.bind(this));
 
-    app.get('router').on('setRoute.get', (route, handler) => {
+    app.get('router').respond('setRoute.get', (route, handler) => {
       _setRoute(route, handler, 'get');
     });
 
-    app.get('router').on('setRoute.post', (route, handler) => {
+    app.get('router').respond('setRoute.post', (route, handler) => {
       _setRoute(route, handler, 'post');
     });
   }
@@ -122,7 +122,7 @@ class Router {
       route = method
       method = 'use'
     }
-    
+
     if(_.isString(route)) {
       this.routeTable[route] = handler
       this.expressApp[method](route, handler);
