@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2015-12-08
+* @Last Modified 2015-12-15
 */
 
 'use strict';
@@ -12,6 +12,7 @@ var util = require('util')
 var express = require('express');
 var _ = require('underscore');
 var bodyParser = require('body-parser');
+var flash = require('connect-flash');
 var compression = require('compression');
 
 class Router {
@@ -71,6 +72,7 @@ class Router {
 
     //Setup express app
     this.expressApp.use(compression())
+    this.expressApp.use(flash())
     this.expressApp.use(bodyParser.urlencoded({ extended: false }));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use((req, res, next) => {
