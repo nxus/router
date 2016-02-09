@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-08
+* @Last Modified 2016-02-09
 */
 
 'use strict';
@@ -34,7 +34,6 @@ class Router {
     .gather('route', this.setRoute.bind(this))
     .respond('getRoutes')
     .respond('getExpressApp')
-    .respond('setAssets')
     .respond('setStatic')
     .respond('setRoute')
     .respond('setRoute.get', (route, handler) => {
@@ -49,8 +48,6 @@ class Router {
     app.once('launch', this.launch.bind(this))
 
     app.once('stop', this.stop.bind(this))
-    
-    app.once('load', this._setup.bind(this));
   }
 
   _setup() {
@@ -152,15 +149,6 @@ class Router {
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
-
-  setAssets (subPrefix, path) {
-    app.log.debug('setting-assets', subPrefix)
-    var prefix = "/assets"
-    if(subPrefix)
-      prefix += subPrefix
-    this.expressApp.use(prefix, express.static(path))
-  }
-
 }
   
 export default Router

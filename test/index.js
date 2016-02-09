@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2016-02-08
+* @Last Modified 2016-02-09
 */
 
 'use strict';
@@ -31,7 +31,6 @@ describe("Router", () => {
   describe("Init", () => {
     it("should register for app lifecycle", () => {
       app.once.called.should.be.true;
-      app.once.calledWith('load').should.be.true;
       app.once.calledWith('launch').should.be.true;
       app.once.calledWith('stop').should.be.true;
     });
@@ -53,12 +52,6 @@ describe("Router", () => {
     it("should register a handler for getExpressApp", () => {
       return app.emit('load').then(() => {
         app.get().respond.calledWith('getExpressApp').should.be.true;
-      });
-    })
-
-    it("should register a handler for setAssets", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('setAssets').should.be.true;
       });
     })
 
