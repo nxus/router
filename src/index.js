@@ -152,6 +152,15 @@ class Router {
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
-}
 
+  setAssets (subPrefix, path) {
+    app.log.debug('setting-assets', subPrefix)
+    var prefix = "/assets"
+    if(subPrefix)
+      prefix += subPrefix
+    this.expressApp.use(prefix, express.static(path))
+  }
+
+}
+  
 export default Router
