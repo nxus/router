@@ -1,15 +1,29 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2015-11-06 @Last Modified time: 2015-11-06 17:10:00
+* @Last Modified 2016-02-08
 */
 
 'use strict';
 
-var should = require('should')
+import Router from '../src/'
 
-var runTests = () => {
-  require('./lib/Router')
-}
+import TestApp from '@nxus/core/lib/test/support/TestApp';
 
-runTests()
+describe("Router", () => {
+  var router;
+  var app = new TestApp();
+ 
+  beforeEach(() => {
+    app = new TestApp();
+  });
+  
+  describe("Load", () => {
+    it("should not be null", () => Router.should.not.be.null)
+
+    it("should be instantiated", () => {
+      router = new Router(app);
+      router.should.not.be.null;
+    });
+  });
+});

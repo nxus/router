@@ -2,9 +2,9 @@
   "name": "@nxus/router",
   "version": "2.2.0",
   "description": "An express-based router for Nxus",
-  "main": "lib/Router.js",
+  "main": "lib",
   "scripts": {
-    "test": "mocha --compilers js:babel/register -R spec test/*",
+    "test": "NODE_ENV=test mocha --compilers js:babel/register -R spec",
     "compile": "babel --optional runtime -d lib/ src/",
     "prepublish": "npm run compile"
   },
