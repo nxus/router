@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-08
+* @Last Modified 2016-02-09
 */
 
 'use strict';
@@ -15,56 +15,58 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var compression = require('compression');
 
+/**
+ * @class Router provides Express based HTTP routing
+ */
 class Router {
-
+  /**
+   * Sets up the relevant gather/providers
+   * @param  {Nxus Application} app the App
+   */
   constructor (app) {
     this.app = app
     this.port = app.config.PORT || 3001
     this.routeTable = {}
 
-    this._setupExpress()
-
-    app.once('launch', () => {
-        app.log('Starting app on port:', this.port);
-        this.server = this.expressApp.listen(this.port);
+    app.get('router').use(this)
+    .gather('middleware', this.setRoute.bind(this))
+    .gather('static', this.setStatic.bind(this))
+    .gather('route', this.setRoute.bind(this))
+    .respond('getRoutes')
+    .respond('getExpressApp')
+    .respond('setStatic')
+    .respond('setRoute')
+    .respond('setRoute.get', (route, handler) => {
+      this.setRoute('GET', route, handler);
     })
-
-    app.once('stop', () => {
-      if (this.server) {
-        app.log('Shutting down app on port:', this.port);
-        this.server.close();
-      }
-    })
-    
-    app.get('router').gather('middleware', this._setRoute.bind(this))
-    app.get('router').gather('static', this._setStatic.bind(this));
-    app.get('router').gather('route', this._setRoute.bind(this));
-    app.get('router').gather('asset', this._setAssets.bind(this));
-
-    app.once('load', () => {
-      this._setupGetters(app)
-      this._setupSetters(app)
-      this._setupError(app)
+    .respond('setRoute.post', (route, handler) => {
+      this.setRoute('POST', route, handler);
     });
+
+    this._setup()
+
+    app.once('launch', this.launch.bind(this))
+
+    app.once('stop', this.stop.bind(this))
   }
 
-  _setupError(app) {
-    if (process.env.NODE_ENV == "production") {
-      app.onceAfter('startup', () => {
-        this.expressApp.use(function errorHandler(err, req, res, next) {
-          app.log.error(
-            'HTTP 500 error serving request\n\n',
-            "Error:\n\n" + err.toString ? err.toString() : "N/A",
-            "Error Stack:\n\n" + err.stack ? err.stack : "N/A",
-            "User:\n\n" + util.inspect(req.user, {depth: 3}),
-            "\n\n\nRequest:\n\n" + util.inspect(req, {depth: 1}),
-            err
-          )
-          res.status(500)
-          res.redirect('/error')
-        })
+  _setup() {
+    this._setupExpress()
+    this.app.onceAfter('startup', () => {
+      this.expressApp.use(function errorHandler(err, req, res, next) {
+        if (this.app.config.NODE_ENV != "production") return next()
+        app.log.error(
+          'HTTP 500 error serving request\n\n',
+          "Error:\n\n" + err.toString ? err.toString() : "N/A",
+          "Error Stack:\n\n" + err.stack ? err.stack : "N/A",
+          "User:\n\n" + util.inspect(req.user, {depth: 3}),
+          "\n\n\nRequest:\n\n" + util.inspect(req, {depth: 1}),
+          err
+        )
+        res.status(500)
+        res.redirect('/error')
       })
-    }
+    })
   }
 
   _setupExpress() {
@@ -81,41 +83,47 @@ class Router {
     })
   }
 
-  _setupGetters(app) {
-    /*
-     * Getters
-     */
-
-    app.get('router').respond('getRoutes', () => {
-      return this.routeTable;
-    })
-
-    app.get('router').respond('getExpressApp', () => {
-      return this.expressApp;
-    })
+  /**
+   * Launches the Express app. Called by the app.load event.
+   */
+  launch() {
+    this.app.log('Starting app on port:', this.port);
+    this.server = this.expressApp.listen(this.port);
   }
 
-  _setupSetters(app) {
-    /*
-     * Setters
-     */
-
-    app.get('router').respond('setAssets', this._setAssets.bind(this));
-    app.get('router').respond('setStatic', this._setStatic.bind(this));
-
-    app.get('router').respond('setRoute', this._setRoute.bind(this));
-
-    app.get('router').respond('setRoute.get', (route, handler) => {
-      _setRoute('GET', route, handler);
-    });
-
-    app.get('router').respond('setRoute.post', (route, handler) => {
-      _setRoute('POST', route, handler);
-    });
+  /**
+   * Stops the express app. Called by the app.stop event.
+   */
+  stop() {
+    if (this.server) {
+      this.app.log('Shutting down app on port:', this.port);
+      this.server.close();
+    }
   }
 
+  /**
+   * Returns the internal routing table.
+   * @return {array} routes which have been registered
+   */
+  getRoutes() {
+    return this.routeTable;
+  }
+
+  /**
+   * Returns the Express App instance.
+   * @return {Instance} ExpressJs app instance.
+   */
+  getExpressApp() {
+    return this.expressApp;
+  }
   
-  _setRoute (method, route, handler) {
+  /**
+   * Adds a route to the internal routing table passed to Express. Accessed with the 'route' and 'middleware' gather.
+   * @param {string} method  Either 'get', 'post', 'put' or 'delete'.
+   * @param {string} route   A URL route.
+   * @param {function} handler  An ExpressJs type callback to handle the route.
+   */
+  setRoute (method, route, handler) {
     if(!handler) {
       handler = route
       route = method
@@ -132,18 +140,15 @@ class Router {
       
   }
 
-  _setStatic (prefix, path) {
+  /**
+   * Adds a path to serve static files. 
+   * @param {string} prefix The path at which the static files will be accessible. For example: /js
+   * @param {string} path   A fully resolved path.
+   */
+  setStatic (prefix, path) {
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
-
-  _setAssets (subPrefix, path) {
-    app.log.debug('setting-assets', subPrefix)
-    var prefix = "/assets"
-    if(subPrefix)
-      prefix += subPrefix
-    this.expressApp.use(prefix, express.static(path))
-  }
 }
-
+  
 export default Router
