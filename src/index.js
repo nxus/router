@@ -87,7 +87,7 @@ class Router {
    * Launches the Express app. Called by the app.load event.
    */
   launch() {
-    app.log('Starting app on port:', this.port);
+    this.app.log('Starting app on port:', this.port);
     this.server = this.expressApp.listen(this.port);
   }
 
@@ -96,7 +96,7 @@ class Router {
    */
   stop() {
     if (this.server) {
-      app.log('Shutting down app on port:', this.port);
+      this.app.log('Shutting down app on port:', this.port);
       this.server.close();
     }
   }

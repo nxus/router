@@ -79,4 +79,27 @@ describe("Router", () => {
       });
     })    
   });
+
+  describe("Providers", () => {
+    it("should return an expressApp", () => {
+      app.emit('load').then(() => {
+        app.get('router').use(router)
+        app.get('router').request('getExpressApp', (expressapp) => {
+          should.exist(expressapp)
+          expressapp.should.have.property('use')
+        })
+      })
+    })
+
+    it('should return the routing table', () => {
+      app.emit('load').then(() => {
+        app.get('router').use(router)
+        app.get('router').provide('route', 'get', '/somepath', () => {})
+        app.get('router').request('getRoutes', (routes) => {
+          should.exist(routes)
+          should.exist(routes['/somepath'])
+        })
+      })
+    })
+  })
 });
