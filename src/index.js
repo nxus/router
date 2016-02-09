@@ -32,7 +32,6 @@ class Router {
     .gather('middleware', this.setRoute.bind(this))
     .gather('static', this.setStatic.bind(this))
     .gather('route', this.setRoute.bind(this))
-    .gather('asset', this.setStatic.bind(this))
     .respond('getRoutes')
     .respond('getExpressApp')
     .respond('setAssets')
@@ -87,11 +86,17 @@ class Router {
     })
   }
 
+  /**
+   * Launches the Express app. Called by the app.load event.
+   */
   launch() {
     app.log('Starting app on port:', this.port);
     this.server = this.expressApp.listen(this.port);
   }
 
+  /**
+   * Stops the express app. Called by the app.stop event.
+   */
   stop() {
     if (this.server) {
       app.log('Shutting down app on port:', this.port);
@@ -99,14 +104,28 @@ class Router {
     }
   }
 
+  /**
+   * Returns the internal routing table.
+   * @return {array} routes which have been registered
+   */
   getRoutes() {
     return this.routeTable;
   }
 
+  /**
+   * Returns the Express App instance.
+   * @return {Instance} ExpressJs app instance.
+   */
   getExpressApp() {
     return this.expressApp;
   }
   
+  /**
+   * Adds a route to the internal routing table passed to Express. Accessed with the 'route' and 'middleware' gather.
+   * @param {string} method  Either 'get', 'post', 'put' or 'delete'.
+   * @param {string} route   A URL route.
+   * @param {function} handler  An ExpressJs type callback to handle the route.
+   */
   setRoute (method, route, handler) {
     if(!handler) {
       handler = route
@@ -124,18 +143,15 @@ class Router {
       
   }
 
+  /**
+   * Adds a path to serve static files. 
+   * @param {string} prefix The path at which the static files will be accessible. For example: /js
+   * @param {string} path   A fully resolved path.
+   */
   setStatic (prefix, path) {
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   } 
-
-  setAssets (subPrefix, path) {
-    app.log.debug('setting-assets', subPrefix)
-    var prefix = "/assets"
-    if(subPrefix)
-      prefix += subPrefix
-    this.expressApp.use(prefix, express.static(path))
-  }
 }
 
 export default Router
