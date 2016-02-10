@@ -1,6 +1,6 @@
 {
   "name": "@nxus/router",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "An express-based router for Nxus",
   "main": "lib",
   "scripts": {
@@ -32,8 +32,6 @@
   },
   "devDependencies": {
     "@nxus/core": "^2.3.0",
-    "babel": "^5.6.23",
-    "mocha": "^2.2.5",
     "babel": "^5.6.23",
     "mocha": "^2.2.5",
     "should": "^7.0.2",
