@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-09
+* @Last Modified 2016-02-10
 */
 
 'use strict';
@@ -53,7 +53,7 @@ class Router {
   _setup() {
     this._setupExpress()
     this.app.onceAfter('startup', () => {
-      this.expressApp.use(function errorHandler(err, req, res, next) {
+      this.expressApp.use((err, req, res, next) => {
         if (this.app.config.NODE_ENV != "production") return next()
         app.log.error(
           'HTTP 500 error serving request\n\n',
