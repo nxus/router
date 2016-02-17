@@ -42,11 +42,11 @@ Sometimes its good to have a static assets folder where all your assets live. Fo
 
 ### Router
 
-[src/index.js:21-152](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L21-L152 "Source code on GitHub")
+[src/index.js:21-169](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L21-L169 "Source code on GitHub")
 
 #### constructor
 
-[src/index.js:26-51](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L26-L51 "Source code on GitHub")
+[src/index.js:26-54](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L26-L54 "Source code on GitHub")
 
 Sets up the relevant gather/providers
 
@@ -56,7 +56,7 @@ Sets up the relevant gather/providers
 
 #### getExpressApp
 
-[src/index.js:116-118](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L116-L118 "Source code on GitHub")
+[src/index.js:119-121](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L119-L121 "Source code on GitHub")
 
 Returns the Express App instance.
 
@@ -64,7 +64,7 @@ Returns **Instance** ExpressJs app instance.
 
 #### getRoutes
 
-[src/index.js:108-110](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L108-L110 "Source code on GitHub")
+[src/index.js:111-113](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L111-L113 "Source code on GitHub")
 
 Returns the internal routing table.
 
@@ -72,13 +72,13 @@ Returns **[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Refere
 
 #### launch
 
-[src/index.js:89-92](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L89-L92 "Source code on GitHub")
+[src/index.js:92-95](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L92-L95 "Source code on GitHub")
 
 Launches the Express app. Called by the app.load event.
 
 #### setRoute
 
-[src/index.js:126-141](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L126-L141 "Source code on GitHub")
+[src/index.js:129-139](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L129-L139 "Source code on GitHub")
 
 Adds a route to the internal routing table passed to Express. Accessed with the 'route' and 'middleware' gather.
 
@@ -90,7 +90,7 @@ Adds a route to the internal routing table passed to Express. Accessed with the 
 
 #### setStatic
 
-[src/index.js:148-151](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L148-L151 "Source code on GitHub")
+[src/index.js:146-149](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L146-L149 "Source code on GitHub")
 
 Adds a path to serve static files.
 
@@ -101,6 +101,6 @@ Adds a path to serve static files.
 
 #### stop
 
-[src/index.js:97-102](https://github.com/nxus/router/blob/8b69fc632c3313c54ee04431a325de759a7b3a8e/src/index.js#L97-L102 "Source code on GitHub")
+[src/index.js:100-105](https://github.com/nxus/router/blob/3af3cb380392f189a102879221e74c2eb0c44917/src/index.js#L100-L105 "Source code on GitHub")
 
 Stops the express app. Called by the app.stop event.
