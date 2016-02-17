@@ -156,6 +156,10 @@ class Router {
   } 
 
   _registerRoute(r) {
+    if(_.isString(r.route))
+      this.app.log.debug('Registering route', r.method, r.route)
+    else
+      this.app.log.debug('Registering middleware')
     if(_.isString(r.route)) {
       this.expressApp[r.method](r.route, r.handler);
     } else {
