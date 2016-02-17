@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2016-02-09
+* @Last Modified 2016-02-17
 */
 
 'use strict';
@@ -97,7 +97,8 @@ describe("Router", () => {
         app.get('router').provide('route', 'get', '/somepath', () => {})
         app.get('router').request('getRoutes', (routes) => {
           should.exist(routes)
-          should.exist(routes['/somepath'])
+          routes.length.should.be.above(0)
+          routes[0].route.should.equal('/somepath')
         })
       })
     })

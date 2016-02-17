@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-10
+* @Last Modified 2016-02-17
 */
 
 'use strict';
@@ -26,7 +26,8 @@ class Router {
   constructor (app) {
     this.app = app
     this.port = app.config.PORT || 3001
-    this.routeTable = {}
+    this.routeTable = []
+    this.registered = false
 
     app.get('router').use(this)
     .gather('middleware', this.setRoute.bind(this))
@@ -45,6 +46,8 @@ class Router {
 
     this._setup()
 
+    app.once('launch.before', this._registerRoutes.bind(this));
+
     app.once('launch', this.launch.bind(this))
 
     app.once('stop', this.stop.bind(this))
@@ -52,7 +55,7 @@ class Router {
 
   _setup() {
     this._setupExpress()
-    this.app.onceAfter('startup', () => {
+    this.app.once('startup', () => {
       this.expressApp.use((err, req, res, next) => {
         if (this.app.config.NODE_ENV != "production") return next()
         app.log.error(
@@ -131,13 +134,8 @@ class Router {
     }
     method = method.toLowerCase();
 
-    if(_.isString(route)) {
-      this.routeTable[route] = handler
-      this.expressApp[method](route, handler);
-    } else {
-      this.expressApp[method](route);
-    }
-      
+    this.routeTable.push({method, route, handler})
+    if(this.registered) this._registerRoute({method, route, handler})
   }
 
   /**
@@ -148,7 +146,26 @@ class Router {
   setStatic (prefix, path) {
     this.app.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
+  }
+
+  _registerRoutes () {
+    this.registered = true
+    this.routeTable.reverse().forEach((r) => {
+      this._registerRoute(r)
+    })
   } 
+
+  _registerRoute(r) {
+    if(_.isString(r.route))
+      this.app.log.debug('Registering route', r.method, r.route)
+    else
+      this.app.log.debug('Registering middleware')
+    if(_.isString(r.route)) {
+      this.expressApp[r.method](r.route, r.handler);
+    } else {
+      this.expressApp[r.method](r.route);
+    }
+  }
 }
   
 export default Router
