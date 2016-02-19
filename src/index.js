@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-17
+* @Last Modified 2016-02-18
 */
 
 'use strict';
@@ -26,11 +26,12 @@ class Router {
   constructor (app) {
     this.app = app
     this.port = app.config.PORT || 3001
+    this.middleware = []
     this.routeTable = []
     this.registered = false
 
     app.get('router').use(this)
-    .gather('middleware', this.setRoute.bind(this))
+    .gather('middleware', this.setMiddleware.bind(this))
     .gather('static', this.setStatic.bind(this))
     .gather('route', this.setRoute.bind(this))
     .respond('getRoutes')
@@ -76,6 +77,7 @@ class Router {
     this.expressApp = express()
 
     //Setup express app
+    
     this.expressApp.use(compression())
     this.expressApp.use(flash())
     this.expressApp.use(bodyParser.urlencoded({ extended: false }));
@@ -119,9 +121,18 @@ class Router {
   getExpressApp() {
     return this.expressApp;
   }
-  
+
   /**
-   * Adds a route to the internal routing table passed to Express. Accessed with the 'route' and 'middleware' gather.
+   * Adds a middleware handler to the internal routing table passed to Express. Accessed with 'middleware' gather.
+   * @param {string} route   A URL route.
+   * @param {function} handler  An ExpressJs type callback to handle the route.
+   */
+  setMiddleware (route, handler, method='use') {
+    this._registerRoute({method, route, handler})
+  }
+
+  /**
+   * Adds a route to the internal routing table passed to Express. Accessed with the 'route' gather.
    * @param {string} method  Either 'get', 'post', 'put' or 'delete'.
    * @param {string} route   A URL route.
    * @param {function} handler  An ExpressJs type callback to handle the route.
@@ -156,13 +167,11 @@ class Router {
   } 
 
   _registerRoute(r) {
-    if(_.isString(r.route))
-      this.app.log.debug('Registering route', r.method, r.route)
-    else
-      this.app.log.debug('Registering middleware')
     if(_.isString(r.route)) {
+      this.app.log.debug('Registering route', r.method, r.route)
       this.expressApp[r.method](r.route, r.handler);
     } else {
+      this.app.log.debug('Registering middleware')
       this.expressApp[r.method](r.route);
     }
   }
