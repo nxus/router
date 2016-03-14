@@ -89,19 +89,19 @@ class Router {
 
     this._setup()
 
-    app.once('launch.before', this._registerRoutes.bind(this));
+    app.onceBefore('launch', this._registerRoutes.bind(this));
 
-    app.once('launch', this.launch.bind(this))
+    app.onceAfter('launch', this.launch.bind(this))
 
     app.once('stop', this.stop.bind(this))
   }
 
   _setup() {
     this._setupExpress()
-    this.app.once('startup', () => {
+    this.app.once('launch', () => {
       this.expressApp.use((err, req, res, next) => {
-        if (this.app.config.NODE_ENV != "production") return next()
-        app.log.error(
+        if (this.app.config.NODE_ENV != "production") return next(err)
+        this.app.log.error(
           'HTTP 500 error serving request\n\n',
           "Error:\n\n" + err.toString ? err.toString() : "N/A",
           "Error Stack:\n\n" + err.stack ? err.stack : "N/A",
