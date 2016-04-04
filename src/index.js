@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-02-20
+* @Last Modified 2016-03-30
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
@@ -175,7 +175,7 @@ class Router {
 
   /**
    * Adds a route to the internal routing table passed to Express. Accessed with the 'route' gather.
-   * @param {string} method  Either 'get', 'post', 'put' or 'delete'.
+   * @param {string} method  Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
    * @param {string} route   A URL route.
    * @param {function} handler  An ExpressJs type callback to handle the route.
    */
@@ -183,7 +183,7 @@ class Router {
     if(!handler) {
       handler = route
       route = method
-      method = 'use'
+      method = 'get'
     }
     method = method.toLowerCase();
 
