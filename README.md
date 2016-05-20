@@ -1,4 +1,4 @@
-# @nxus/router
+# nxus-router
 
 ## 
 
