@@ -1,14 +1,14 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2016-02-17
+* @Last Modified 2016-05-20
 */
 
 'use strict';
 
 import Router from '../src/'
 
-import TestApp from '@nxus/core/lib/test/support/TestApp';
+import TestApp from 'nxus-core/lib/test/support/TestApp';
 
 describe("Router", () => {
   var router;

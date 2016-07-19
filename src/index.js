@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-03-30
+* @Last Modified 2016-05-19
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
@@ -48,7 +48,7 @@
 
 'use strict';
 
-require('babel-runtime/core-js/promise').default = require('bluebird');
+global.Promise = require('bluebird');
 
 var util = require('util')
 var express = require('express');
@@ -56,6 +56,8 @@ var _ = require('underscore');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var compression = require('compression');
+
+import SessionMiddleware from './sessionMiddleware.js'
 
 /**
  * @class Router provides Express based HTTP routing
@@ -94,6 +96,8 @@ class Router {
     app.onceAfter('launch', this.launch.bind(this))
 
     app.once('stop', this.stop.bind(this))
+
+    new SessionMiddleware(app)
   }
 
   _setup() {
