@@ -1,8 +1,8 @@
 /*
 * @Author: mike
 * @Date:   2016-05-19 17:28:35
-* @Last Modified 2016-05-20
-* @Last Modified time: 2016-05-20 09:13:36
+* @Last Modified 2016-07-27
+* @Last Modified time: 2016-07-27 08:24:27
 */
 
 'use strict';
@@ -19,7 +19,7 @@ export default (app) => {
       },
       secret: app.config.namespace || 'appsecret',
       name: app.config.namespace || 'nxus',
-      store: new FileStore,
+      store: new FileStore({path: './.tmp/sessions'}),
       resave: true,
       saveUninitialized: true,
       logFn: app.log.debug
