@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-07-16 10:52:58
-* @Last Modified 2016-05-19
+* @Last Modified 2016-07-27
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
@@ -75,9 +75,9 @@ class Router {
     this.registered = false
 
     app.get('router').use(this)
-    .gather('middleware', this.setMiddleware.bind(this))
-    .gather('static', this.setStatic.bind(this))
-    .gather('route', this.setRoute.bind(this))
+    .respond('middleware', this.setMiddleware.bind(this))
+    .respond('static', this.setStatic.bind(this))
+    .respond('route', this.setRoute.bind(this))
     .respond('getRoutes')
     .respond('getExpressApp')
     .respond('setStatic')

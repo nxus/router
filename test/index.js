@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2016-05-20
+* @Last Modified 2016-08-22
 */
 
 'use strict';
@@ -41,13 +41,6 @@ describe("Router", () => {
         router.should.have.property('routeTable');
       });
     });
-
-    it("should register a gather for routes", () => {
-      return app.emit('load').then(() => {
-        app.get.calledWith('router').should.be.true;
-        app.get().gather.calledWith('route').should.be.true;
-      });
-    })
 
     it("should register a handler for getExpressApp", () => {
       return app.emit('load').then(() => {
