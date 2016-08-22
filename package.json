@@ -1,6 +1,6 @@
 {
   "name": "nxus-router",
-  "version": "3.0.0-1",
+  "version": "3.0.0",
   "description": "An express-based router for Nxus",
   "main": "lib",
   "scripts": {
