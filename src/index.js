@@ -12,31 +12,33 @@
  * 
  * In your Nxus application:
  * 
- *     > npm install @nxus/router --save
+ *     > npm install nxus-router --save
  * 
  * ## Usage
  * 
  * ### Defining a route
  * 
- *     app.get('router').route('/', (req, res) => {
+ *     import router from 'nxus-router'
+ * 
+ *     router.route('/', (req, res) => {
  *       res.send('Hello World')
  *     })
  * 
  * Alternatively, you can specify a HTTP method:
  * 
- *     app.get('router').route('GET', '/', (req, res) => {
+ *     router.route('GET', '/', (req, res) => {
  *       res.send('Hello World')
  *     })
  * 
  * ### Adding Express/connect middleware
  * 
- *     app.get('router').middleware((req, res) => {
+ *     router.middleware((req, res) => {
  *       res.status(404).send('Nothing to see here');
  *     })
  * 
  * ### Adding static files/directories
  * 
- *     app.get('router').static("my-prefix", myPath)
+ *     router.static("my-prefix", myPath)
  * 
  * For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/myFile.txt`
  * 
@@ -48,33 +50,34 @@
 
 'use strict';
 
-global.Promise = require('bluebird');
-
-var util = require('util')
-var express = require('express');
-var _ = require('underscore');
-var bodyParser = require('body-parser');
-var flash = require('connect-flash');
-var compression = require('compression');
+import util from 'util'
+import express from 'express'
+import _ from 'underscore'
+import bodyParser from 'body-parser'
+import flash from 'connect-flash'
+import compression from 'compression'
 
 import SessionMiddleware from './sessionMiddleware.js'
+
+import {application, NxusModule} from 'nxus-core'
+
 
 /**
  * @class Router provides Express based HTTP routing
  */
-class Router {
+class Router extends NxusModule {
   /**
    * Sets up the relevant gather/providers
    * @param  {Nxus Application} app the App
    */
   constructor (app) {
-    this.app = app
+    super(app)
     this.port = app.config.PORT || 3001
     this.middleware = []
     this.routeTable = []
     this.registered = false
 
-    app.get('router').use(this)
+    this
     .respond('middleware', this.setMiddleware.bind(this))
     .respond('static', this.setStatic.bind(this))
     .respond('route', this.setRoute.bind(this))
@@ -91,21 +94,21 @@ class Router {
 
     this._setup()
 
-    app.onceBefore('launch', this._registerRoutes.bind(this));
+    application.onceBefore('launch', this._registerRoutes.bind(this));
 
-    app.onceAfter('launch', this.launch.bind(this))
+    application.onceAfter('launch', this.launch.bind(this))
 
-    app.once('stop', this.stop.bind(this))
+    application.once('stop', this.stop.bind(this))
 
     new SessionMiddleware(app)
   }
 
   _setup() {
     this._setupExpress()
-    this.app.once('launch', () => {
+    application.once('launch', () => {
       this.expressApp.use((err, req, res, next) => {
-        if (this.app.config.NODE_ENV != "production") return next(err)
-        this.app.log.error(
+        if (application.config.NODE_ENV != "production") return next(err)
+        application.log.error(
           'HTTP 500 error serving request\n\n',
           "Error:\n\n" + err.toString ? err.toString() : "N/A",
           "Error Stack:\n\n" + err.stack ? err.stack : "N/A",
@@ -138,7 +141,7 @@ class Router {
    * Launches the Express app. Called by the app.load event.
    */
   launch() {
-    this.app.log('Starting app on port:', this.port);
+    application.log('Starting app on port:', this.port);
     this.server = this.expressApp.listen(this.port);
   }
 
@@ -147,7 +150,7 @@ class Router {
    */
   stop() {
     if (this.server) {
-      this.app.log('Shutting down app on port:', this.port);
+      application.log('Shutting down app on port:', this.port);
       this.server.close();
     }
   }
@@ -201,7 +204,7 @@ class Router {
    * @param {string} path   A fully resolved path.
    */
   setStatic (prefix, path) {
-    this.app.log.debug('setting-static', prefix)
+    application.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   }
 
@@ -214,13 +217,14 @@ class Router {
 
   _registerRoute(r) {
     if(_.isString(r.route)) {
-      this.app.log.debug('Registering route', r.method, r.route)
+      application.log.debug('Registering route', r.method, r.route)
       this.expressApp[r.method](r.route, r.handler);
     } else {
-      this.app.log.debug('Registering middleware')
+      application.log.debug('Registering middleware')
       this.expressApp[r.method](r.route);
     }
   }
 }
   
 export default Router
+export let router = Router.getProxy()

@@ -8,11 +8,13 @@
 'use strict';
 
 import expressSession from 'express-session';
+import {router} from './index'
 import _ from 'underscore';
+
 var FileStore = require('session-file-store')(expressSession);
 
 export default (app) => {
-  app.get('router').provideBefore('middleware', expressSession(
+  router.provideBefore('middleware', expressSession(
     {
       cookie: {
           maxAge: 1000*60*60*24 // 3 hour session

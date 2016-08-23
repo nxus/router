@@ -24,17 +24,15 @@
     "compression": "^1.4.3",
     "connect-flash": "^0.1.1",
     "express": "^4.10.7",
-    "underscore": "^1.7.0",
     "express-session": "^1.12.1",
-    "session-file-store": "0.2.0"
+    "nxus-core": "^4.0.0-0",
+    "session-file-store": "0.2.0",
+    "underscore": "^1.7.0"
   },
   "bugs": {
     "url": "https://github.com/nxus/router-express/issues"
   },
   "homepage": "https://github.com/nxus/router-express",
-  "peerDependencies": {
-    "nxus-core": "^3.0.0-0"
-  },
   "devDependencies": {
     "mocha": "^2.2.5",
     "should": "^7.0.2",
