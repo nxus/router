@@ -65,18 +65,17 @@ class Router extends NxusModule {
   constructor () {
     super()
     this.port = application.config.PORT || 3001
-    this.middleware = []
     this.routeTable = []
     this.registered = false
 
     this
-    .respond('middleware', this.setMiddleware.bind(this))
-    .respond('static', this.setStatic.bind(this))
-    .respond('route', this.setRoute.bind(this))
+    .respond('middleware')
+    .respond('static', ::this.setStatic)
+    .respond('route')
     .respond('getRoutes')
     .respond('getExpressApp')
     .respond('setStatic')
-    .respond('setRoute')
+    .respond('setRoute', ::this.route)
 
     this._setup()
 
@@ -126,7 +125,7 @@ class Router extends NxusModule {
    * Launches the Express app. Called by the app.load event.
    */
   launch() {
-    this.log('Starting app on port:', this.port);
+    this.log.info('Starting app on port:', this.port);
     this.server = this.expressApp.listen(this.port);
   }
 
@@ -135,7 +134,7 @@ class Router extends NxusModule {
    */
   stop() {
     if (this.server) {
-      this.log('Shutting down app on port:', this.port);
+      this.log.info('Shutting down app on port:', this.port);
       this.server.close();
     }
   }
@@ -161,7 +160,7 @@ class Router extends NxusModule {
    * @param {string} route   A URL route.
    * @param {function} handler  An ExpressJs type callback to handle the route.
    */
-  setMiddleware (route, handler, method='use') {
+  middleware (route, handler, method='use') {
     this._registerRoute({method, route, handler})
   }
 
@@ -171,7 +170,7 @@ class Router extends NxusModule {
    * @param {string} route   A URL route.
    * @param {function} handler  An ExpressJs type callback to handle the route.
    */
-  setRoute (method, route, handler) {
+  route (method, route, handler) {
     if(!handler) {
       handler = route
       route = method
@@ -185,7 +184,7 @@ class Router extends NxusModule {
 
   /**
    * Adds a path to serve static files. 
-   * @param {string} prefix The path at which the static files will be accessible. For example: /js
+   * @param {string} prefix The path at which the static files will be accessible. For example: "/js"
    * @param {string} path   A fully resolved path.
    */
   setStatic (prefix, path) {
