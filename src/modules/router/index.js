@@ -57,8 +57,6 @@ import bodyParser from 'body-parser'
 import flash from 'connect-flash'
 import compression from 'compression'
 
-import SessionMiddleware from './sessionMiddleware.js'
-
 import {application, NxusModule} from 'nxus-core'
 
 /**
@@ -93,7 +91,6 @@ class Router extends NxusModule {
 
     application.once('stop', this.stop.bind(this))
 
-    new SessionMiddleware(app)
   }
 
   _setup() {

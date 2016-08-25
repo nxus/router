@@ -9,8 +9,8 @@
 import sinon from 'sinon'
 import {application as app} from 'nxus-core'
 
-import Router from '../src'
-import {router as routerProxy} from '../src'
+import Router from '../'
+import {router as routerProxy} from '../'
 
 describe("Router", () => {
   var router
@@ -26,7 +26,10 @@ describe("Router", () => {
   });
   
   describe("Load", () => {
-    it("should not be null", () => Router.should.not.be.null)
+    it("should not be null", () => {
+      Router.should.not.be.null
+      routerProxy.should.not.be.null
+    })
 
     it("should be instantiated", () => {
       router = new Router(app);
