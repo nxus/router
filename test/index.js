@@ -6,16 +6,22 @@
 
 'use strict';
 
-import Router from '../src/'
+import sinon from 'sinon'
+import {application as app} from 'nxus-core'
+import TestApp from 'nxus-core/lib/test/support/TestApp'
 
-import TestApp from 'nxus-core/lib/test/support/TestApp';
+import Router from '../src'
 
 describe("Router", () => {
-  var router;
-  var app = new TestApp();
+  var router, testApp
+
+  before(() => {
+    testApp = new TestApp()
+    sinon.spy(app, "once")
+    app.get = testApp.get
+  })
  
   beforeEach(() => {
-    app = new TestApp();
     router = new Router(app);
   });
   

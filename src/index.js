@@ -61,7 +61,6 @@ import SessionMiddleware from './sessionMiddleware.js'
 
 import {application, NxusModule} from 'nxus-core'
 
-
 /**
  * @class Router provides Express based HTTP routing
  */
