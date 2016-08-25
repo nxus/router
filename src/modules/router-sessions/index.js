@@ -8,7 +8,7 @@
 'use strict';
 
 import expressSession from 'express-session';
-import {router} from '../router'
+import {router} from '../../'
 import _ from 'underscore';
 
 import {application, NxusModule} from 'nxus-core'
