@@ -84,12 +84,6 @@ class Router extends NxusModule {
     .respond('getExpressApp')
     .respond('setStatic')
     .respond('setRoute')
-    .respond('setRoute.get', (route, handler) => {
-      this.setRoute('GET', route, handler);
-    })
-    .respond('setRoute.post', (route, handler) => {
-      this.setRoute('POST', route, handler);
-    });
 
     this._setup()
 

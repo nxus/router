@@ -8,17 +8,17 @@
 
 import sinon from 'sinon'
 import {application as app} from 'nxus-core'
-import TestApp from 'nxus-core/lib/test/support/TestApp'
 
 import Router from '../src'
+import {router as routerProxy} from '../src'
 
 describe("Router", () => {
-  var router, testApp
+  var router
 
   before(() => {
-    testApp = new TestApp()
     sinon.spy(app, "once")
-    app.get = testApp.get
+    sinon.spy(routerProxy, "respond")
+    sinon.spy(routerProxy, "request")
   })
  
   beforeEach(() => {
@@ -42,63 +42,41 @@ describe("Router", () => {
     });
 
     it("should have port after load", () => {
-      return app.emit('load').then(() => {
-        router.should.have.property('port');
-        router.should.have.property('routeTable');
-      });
+      router.should.have.property('port');
+      router.should.have.property('routeTable');
     });
 
     it("should register a handler for getExpressApp", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('getExpressApp').should.be.true;
-      });
+      routerProxy.respond.calledWith('getExpressApp').should.be.true;
     })
 
+    it("should register a handler for getRoutes", () => {
+      routerProxy.respond.calledWith('getRoutes').should.be.true;
+    })
+    
     it("should register a handler for setStatic", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('setStatic').should.be.true;
-      });
+      routerProxy.respond.calledWith('setStatic').should.be.true;
     })
 
     it("should register a handler for setRoute", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('setRoute').should.be.true;
-      });
+      routerProxy.respond.calledWith('setRoute').should.be.true;
     })
-
-    it("should register a handler for setRoute.get", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('setRoute.get').should.be.true;
-      });
-    })
-
-    it("should register a handler for setRoute.post", () => {
-      return app.emit('load').then(() => {
-        app.get().respond.calledWith('setRoute.post').should.be.true;
-      });
-    })    
   });
 
   describe("Providers", () => {
     it("should return an expressApp", () => {
-      app.emit('load').then(() => {
-        app.get('router').use(router)
-        app.get('router').request('getExpressApp', (expressapp) => {
-          should.exist(expressapp)
-          expressapp.should.have.property('use')
-        })
+      routerProxy.getExpressApp().then((expressapp) => {
+        should.exist(expressapp)
+        expressapp.should.have.property('use')
       })
     })
 
     it('should return the routing table', () => {
-      app.emit('load').then(() => {
-        app.get('router').use(router)
-        app.get('router').provide('route', 'get', '/somepath', () => {})
-        app.get('router').request('getRoutes', (routes) => {
-          should.exist(routes)
-          routes.length.should.be.above(0)
-          routes[0].route.should.equal('/somepath')
-        })
+      routerProxy.route('get', '/somepath', () => {})
+      routerProxy.getRoutes().then((routes) => {
+        should.exist(routes)
+        routes.length.should.be.above(0)
+        routes[0].route.should.equal('/somepath')
       })
     })
   })
