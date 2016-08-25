@@ -13,7 +13,7 @@
  * 
  * ### Defining a route
  * 
- *     import router from 'nxus-router'
+ *     import {router} from 'nxus-router'
  * 
  *     router.route('/', (req, res) => {
  *       res.send('Hello World')
@@ -43,6 +43,6 @@
  * -----
  */
 
-import {Router, router} from 'modules/router'
+import Router, {router} from './modules/router'
 
 export {Router as default, router}

@@ -16,7 +16,7 @@ In your Nxus application:
 
 #### Defining a route
 
-    import router from 'nxus-router'
+    import {router} from 'nxus-router'
 
     router.route('/', (req, res) => {
       res.send('Hello World')

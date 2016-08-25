@@ -17,9 +17,9 @@ class Router extends NxusModule {
    * Sets up the relevant gather/providers
    * @param  {Nxus Application} app the App
    */
-  constructor (app) {
-    super(app)
-    this.port = app.config.PORT || 3001
+  constructor () {
+    super()
+    this.port = application.config.PORT || 3001
     this.middleware = []
     this.routeTable = []
     this.registered = false
@@ -48,7 +48,7 @@ class Router extends NxusModule {
     application.once('launch', () => {
       this.expressApp.use((err, req, res, next) => {
         if (application.config.NODE_ENV != "production") return next(err)
-        application.log.error(
+        this.log.error(
           'HTTP 500 error serving request\n\n',
           "Error:\n\n" + err.toString ? err.toString() : "N/A",
           "Error Stack:\n\n" + err.stack ? err.stack : "N/A",
@@ -81,7 +81,7 @@ class Router extends NxusModule {
    * Launches the Express app. Called by the app.load event.
    */
   launch() {
-    application.log('Starting app on port:', this.port);
+    this.log('Starting app on port:', this.port);
     this.server = this.expressApp.listen(this.port);
   }
 
@@ -90,7 +90,7 @@ class Router extends NxusModule {
    */
   stop() {
     if (this.server) {
-      application.log('Shutting down app on port:', this.port);
+      this.log('Shutting down app on port:', this.port);
       this.server.close();
     }
   }
@@ -144,7 +144,7 @@ class Router extends NxusModule {
    * @param {string} path   A fully resolved path.
    */
   setStatic (prefix, path) {
-    application.log.debug('setting-static', prefix)
+    this.log.debug('setting-static', prefix)
     this.expressApp.use(prefix, express.static(path))
   }
 
@@ -157,14 +157,14 @@ class Router extends NxusModule {
 
   _registerRoute(r) {
     if(_.isString(r.route)) {
-      application.log.debug('Registering route', r.method, r.route)
+      this.log.debug('Registering route', r.method, r.route)
       this.expressApp[r.method](r.route, r.handler);
     } else {
-      application.log.debug('Registering middleware')
+      this.log.debug('Registering middleware')
       this.expressApp[r.method](r.route);
     }
   }
 }
-  
+
 export default Router
 export let router = Router.getProxy()
