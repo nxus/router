@@ -1,6 +1,6 @@
 {
   "name": "nxus-router",
-  "version": "3.0.0",
+  "version": "4.0.0-0",
   "description": "An express-based router for Nxus",
   "main": "lib",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "NODE_ENV=test mocha --recursive --compilers js:babel-register -R spec src/modules/**/test/*",
     "compile": "babel src --out-dir lib",
     "prepublish": "npm run compile",
-    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
+    "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/index.js ./src/modules/*/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
     "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
   },
   "repository": {

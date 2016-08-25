@@ -45,3 +45,64 @@ Sometimes its good to have a static assets folder where all your assets live. Fo
 ## API
 
 * * *
+
+## Router
+
+**Extends NxusModule**
+
+### constructor
+
+Sets up the relevant gather/providers
+
+**Parameters**
+
+-   `app`  
+
+### launch
+
+Launches the Express app. Called by the app.load event.
+
+### stop
+
+Stops the express app. Called by the app.stop event.
+
+### getRoutes
+
+Returns the internal routing table.
+
+Returns **[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** routes which have been registered
+
+### getExpressApp
+
+Returns the Express App instance.
+
+Returns **Instance** ExpressJs app instance.
+
+### setMiddleware
+
+Adds a middleware handler to the internal routing table passed to Express. Accessed with 'middleware' gather.
+
+**Parameters**
+
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+-   `method`   (optional, default `'use'`)
+
+### setRoute
+
+Adds a route to the internal routing table passed to Express. Accessed with the 'route' gather.
+
+**Parameters**
+
+-   `method` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+
+### setStatic
+
+Adds a path to serve static files.
+
+**Parameters**
+
+-   `prefix` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** The path at which the static files will be accessible. For example: /js
+-   `path` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A fully resolved path.
