@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-11-06 17:10:00
-* @Last Modified 2016-08-22
+* @Last Modified 2016-08-25
 */
 
 'use strict';
@@ -48,22 +48,6 @@ describe("Router", () => {
       router.should.have.property('port');
       router.should.have.property('routeTable');
     });
-
-    it("should register a handler for getExpressApp", () => {
-      routerProxy.respond.calledWith('getExpressApp').should.be.true;
-    })
-
-    it("should register a handler for getRoutes", () => {
-      routerProxy.respond.calledWith('getRoutes').should.be.true;
-    })
-    
-    it("should register a handler for setStatic", () => {
-      routerProxy.respond.calledWith('setStatic').should.be.true;
-    })
-
-    it("should register a handler for setRoute", () => {
-      routerProxy.respond.calledWith('setRoute').should.be.true;
-    })
   });
 
   describe("Providers", () => {

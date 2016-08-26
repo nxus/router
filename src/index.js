@@ -66,13 +66,6 @@ class Router extends NxusModule {
     this.routeTable = []
     this.registered = false
 
-    this
-    .respond('middleware')
-    .respond('staticRoute')
-    .respond('route')
-    .respond('getRoutes')
-    .respond('getExpressApp')
-
     this._setup()
 
     application.onceBefore('launch', ::this._registerRoutes)
