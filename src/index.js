@@ -110,7 +110,7 @@ class Router extends NxusModule {
    * Launches the Express app. Called by the app.load event.
    */
   _start() {
-    this.log.info('Starting express on port:', this.port)
+    this.log.info('Starting express, available at http://localhost:'+this.port)
     this.server = this.expressApp.listen(this.port)
   }
 

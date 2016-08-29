@@ -23,7 +23,7 @@ describe("RouterSessions", () => {
     })
 
     it("should have default config", () => {
-      let c = instance.defaultConfig()
+      let c = instance.config
       c.should.have.property('cookie')
       c.should.have.property('secret')
       c.should.have.property('resave', true)
