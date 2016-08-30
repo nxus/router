@@ -78,14 +78,6 @@ class Router extends NxusModule {
 
   _setup() {
     this._setupExpress()
-    application.once('launch', () => {
-      this.expressApp.use((err, req, res, next) => {
-        if (application.config.NODE_ENV != 'production') return next(err)
-        res.status(500).send(err)
-        // TODO: need to render the error page here rather than redirect
-        //res.redirect('/error')
-      })
-    })
   }
 
   _setupExpress() {
@@ -143,7 +135,7 @@ class Router extends NxusModule {
 
   /**
    * Adds a middleware handler to the internal routing table passed to Express. Accessed with 'middleware' gather.
-   * @param {string} route   A URL route.
+   * @param {string} route   A URL route or the handler for all routes
    * @param {function} handler  An ExpressJs type callback to handle the route.
    */
   middleware (route, handler, method='use') {

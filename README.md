@@ -1,6 +1,6 @@
 # nxus-router
 
-## router
+## 
 
 [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
 
@@ -31,40 +31,28 @@ Alternatively, you can specify a HTTP method:
 #### Adding Express/connect middleware
 
     router.middleware((req, res) => {
-      res.status(404).send('Nothing to see here');
+      res.status(404).send('Nothing to see here')
     })
 
 #### Adding static files/directories
 
-    router.static("my-prefix", myPath)
+    router.staticRoute("/my-prefix", myPath)
 
 For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/myFile.txt`
 
 Sometimes its good to have a static assets folder where all your assets live. For that reason, you can use the `assets` gatherer.
 
-## API
-
-* * *
-
 ## Router
 
 **Extends NxusModule**
 
-### constructor
+Router provides Express based HTTP routing
 
-Sets up the relevant gather/providers
+**Examples**
 
-**Parameters**
-
--   `app`  
-
-### launch
-
-Launches the Express app. Called by the app.load event.
-
-### stop
-
-Stops the express app. Called by the app.stop event.
+```javascript
+import {router} from 'nxus-router'
+```
 
 ### getRoutes
 
@@ -78,19 +66,29 @@ Returns the Express App instance.
 
 Returns **Instance** ExpressJs app instance.
 
-### setMiddleware
+### middleware
 
 Adds a middleware handler to the internal routing table passed to Express. Accessed with 'middleware' gather.
 
 **Parameters**
 
--   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route or the handler for all routes
 -   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
 -   `method`   (optional, default `'use'`)
 
-### setRoute
+### route
 
-Adds a route to the internal routing table passed to Express. Accessed with the 'route' gather.
+Adds a GET route to the internal routing table passed to Express. Accessed with the 'route' gather.
+
+**Parameters**
+
+-   `method`  
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+
+### route
+
+Adds a route of any method. Accessed with the 'route' gather.
 
 **Parameters**
 
@@ -98,11 +96,11 @@ Adds a route to the internal routing table passed to Express. Accessed with the 
 -   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
 -   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
 
-### setStatic
+### staticRoute
 
 Adds a path to serve static files.
 
 **Parameters**
 
--   `prefix` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** The path at which the static files will be accessible. For example: /js
+-   `prefix` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** The path at which the static files will be accessible. For example: "/js"
 -   `path` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A fully resolved path.
