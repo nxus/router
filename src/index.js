@@ -47,7 +47,6 @@ import util from 'util'
 import express from 'express'
 import _ from 'underscore'
 import bodyParser from 'body-parser'
-import flash from 'connect-flash'
 import compression from 'compression'
 
 import {application, NxusModule} from 'nxus-core'
@@ -86,7 +85,6 @@ class Router extends NxusModule {
     //Setup express app
     
     this.expressApp.use(compression())
-    this.expressApp.use(flash())
     this.expressApp.use(bodyParser.urlencoded({ extended: false }))
     this.expressApp.use(bodyParser.json())
     if(application.config.NODE_ENV != 'production') {
