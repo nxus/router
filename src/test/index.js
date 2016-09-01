@@ -17,6 +17,8 @@ describe("Router", () => {
 
   before(() => {
     sinon.spy(app, "once")
+    sinon.spy(app, "onceBefore")
+    sinon.spy(app, "onceAfter")
     sinon.spy(routerProxy, "respond")
     sinon.spy(routerProxy, "request")
   })
@@ -40,7 +42,8 @@ describe("Router", () => {
   describe("Init", () => {
     it("should register for app lifecycle", () => {
       app.once.called.should.be.true;
-      app.once.calledWith('launch').should.be.true;
+      app.onceBefore.calledWith('launch').should.be.true;
+      app.onceAfter.calledWith('launch').should.be.true;
       app.once.calledWith('stop').should.be.true;
     });
 
