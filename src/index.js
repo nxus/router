@@ -1,4 +1,6 @@
 /**
+ * # Router Module
+ * 
  * [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
  * 
  * The Nxus router is an Express compatible web server and router for Nxus applications.
