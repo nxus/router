@@ -87,7 +87,7 @@ class Router extends NxusModule {
     //Setup express app
     
     this.expressApp.use(compression())
-    this.expressApp.use(bodyParser.urlencoded({ extended: false }))
+    this.expressApp.use(bodyParser.urlencoded({ extended: true }))
     this.expressApp.use(bodyParser.json())
     if(application.config.NODE_ENV != 'production') {
       this.expressApp.use((req, res, next) => {
