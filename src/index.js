@@ -39,7 +39,6 @@
  * 
  * For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/myFile.txt`
  * 
- * Sometimes its good to have a static assets folder where all your assets live. For that reason, you can use the `assets` gatherer.
  * 
  */
 
@@ -134,22 +133,18 @@ class Router extends NxusModule {
   }
 
   /**
-   * Adds a middleware handler to the internal routing table passed to Express. Accessed with 'middleware' gather.
+   * Adds a middleware handler to the internal routing table passed to Express
    * @param {string} route   A URL route or the handler for all routes
    * @param {function} handler  An ExpressJs type callback to handle the route.
+   * @param {string} [method]  optional HTTP method, defaults to all ('use')
    */
   middleware (route, handler, method='use') {
     this._registerRoute({method, route, handler})
   }
 
   /**
-   * Adds a GET route to the internal routing table passed to Express. Accessed with the 'route' gather.
-   * @param {string} route   A URL route.
-   * @param {function} handler  An ExpressJs type callback to handle the route.
-   */
-  /**
-   * Adds a route of any method. Accessed with the 'route' gather.
-   * @param {string} method  Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
+   * Adds a route to express.
+   * @param {string} [method]  Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
    * @param {string} route   A URL route.
    * @param {function} handler  An ExpressJs type callback to handle the route.
    */
