@@ -87,7 +87,7 @@ class Router extends NxusModule {
     
     this.expressApp.use(compression())
     this.expressApp.use(bodyParser.urlencoded({ extended: true }))
-    this.expressApp.use(bodyParser.json())
+    this.expressApp.use(bodyParser.json({limit: "1mb"}))
     if(application.config.NODE_ENV != 'production') {
       this.expressApp.use((req, res, next) => {
         res.set('Connection', 'close') //need to turn this off on production environments
