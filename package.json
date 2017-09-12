@@ -1,6 +1,6 @@
 {
   "name": "nxus-router",
-  "version": "4.0.0-3",
+  "version": "4.0.0",
   "description": "An express-based router for Nxus",
   "main": "lib",
   "scripts": {
@@ -20,6 +20,7 @@
   "author": "info@nxusapp.com",
   "license": "MIT",
   "dependencies": {
+    "babel-preset-env": "^1.6.0",
     "bluebird": "^3.0.5",
     "body-parser": "^1.10.1",
     "compression": "^1.4.3",
@@ -36,6 +37,8 @@
   "devDependencies": {
     "babel-cli": "^6.9.0",
     "babel-core": "^6.9.0",
+    "babel-register": "^6.9.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-plugin-transform-function-bind": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "chai": "^3.5.0",

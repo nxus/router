@@ -34,7 +34,7 @@ describe("Router", () => {
     })
 
     it("should be instantiated", () => {
-      router = new Router(app);
+      router = new Router();
       router.should.not.be.null;
     });
   });
@@ -49,7 +49,13 @@ describe("Router", () => {
 
     it("should have port after load", () => {
       router.should.have.property('port');
-      router.should.have.property('routeTable');
+      router.should.have.property('_routeTable');
+      router.should.have.property('registered', false);
+    });
+
+    it("should have default config after load", () => {
+      router.config.should.have.property('staticRoutesInSession', false);
+      router.config.should.have.property('sessionStoreName', 'file-store-session');
     });
   });
 

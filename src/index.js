@@ -11,6 +11,14 @@
  * 
  *     > npm install nxus-router --save
  * 
+ * ## Configuration Options
+ * 
+ *       'router': {
+ *         'staticRoutesInSession': false, // Should static routes use sessions
+ *         'sessionStoreName': 'file-store-session', // name of a registered session store name
+ *         'bodyParserJsonOptions': {'limit': '1mb'} // Config options for body parser json handling
+ *       }
+ * 
  * ## Usage
  * 
  * ### Defining a route
@@ -55,6 +63,7 @@ import {application, NxusModule} from 'nxus-core'
 /**
  * Router provides Express based HTTP routing
  *
+ *
  * @example
  * import {router} from 'nxus-router'
  */
@@ -63,7 +72,10 @@ class Router extends NxusModule {
   constructor () {
     super()
     this.port = application.config.PORT || 3001
-    this.routeTable = []
+    this._sessionMiddleware = {}
+    this._middlewareStack = []
+    this._staticStack = []
+    this._routeTable = []
     this.registered = false
 
     this._setup()
@@ -74,6 +86,16 @@ class Router extends NxusModule {
 
     application.once('stop', ::this._stop)
 
+  }
+
+  _defaultConfig() {
+    return {
+      staticRoutesInSession: false,
+      sessionStoreName: 'file-store-session',
+      bodyParserJsonOptions: {
+        limit: "1mb"
+      }
+    }
   }
 
   _setup() {
@@ -87,7 +109,7 @@ class Router extends NxusModule {
     
     this.expressApp.use(compression())
     this.expressApp.use(bodyParser.urlencoded({ extended: true }))
-    this.expressApp.use(bodyParser.json({limit: "1mb"}))
+    this.expressApp.use(bodyParser.json(this.config.bodyParserJsonOptions))
     if(application.config.NODE_ENV != 'production') {
       this.expressApp.use((req, res, next) => {
         res.set('Connection', 'close') //need to turn this off on production environments
@@ -121,7 +143,7 @@ class Router extends NxusModule {
    * @return {array} routes which have been registered
    */
   getRoutes() {
-    return this.routeTable
+    return this._routeTable
   }
 
   /**
@@ -133,13 +155,25 @@ class Router extends NxusModule {
   }
 
   /**
+   * Sets the middleware handler for sessions, first in the configured stack
+   * @param {string} name       If config names a session handler, only that name will be accepted
+   * @param {function} handler  An ExpressJs type callback to handle the route.
+   */
+  sessionMiddleware (name, handler) {
+    if(this.registered) throw new Error("Tried to set session middleware, but already launched:", handler)
+    this.log.debug("Registered session middleware", name)
+    this._sessionMiddleware[name] = {method:'use', route:handler, name}
+  }
+
+  /**
    * Adds a middleware handler to the internal routing table passed to Express
    * @param {string} route   A URL route or the handler for all routes
    * @param {function} handler  An ExpressJs type callback to handle the route.
    * @param {string} [method]  optional HTTP method, defaults to all ('use')
    */
   middleware (route, handler, method='use') {
-    this._registerRoute({method, route, handler})
+    this._middlewareStack.push({method, route, handler})
+    if(this.registered) this._registerRoute({method, route, handler})
   }
 
   /**
@@ -156,33 +190,53 @@ class Router extends NxusModule {
     }
     method = method.toLowerCase()
 
-    this.routeTable.push({method, route, handler})
+    this._routeTable.push({method, route, handler})
     if(this.registered) this._registerRoute({method, route, handler})
   }
 
   /**
-   * Adds a path to serve static files. 
+   * Adds a path to serve static files.
    * @param {string} prefix The path at which the static files will be accessible. For example: "/js"
    * @param {string} path   A fully resolved path.
    */
   staticRoute (prefix, path) {
     this.log.debug('Adding static route', prefix)
-    this.expressApp.use(prefix, express.static(path))
+    let method = 'use'
+    let route = prefix
+    let handler = express.static(path)
+    this._staticStack.push({method, route, handler})
+    if(this.registered) this._registerRoute({method, route, handler})
   }
 
-  _registerRoutes () {
+  async _registerRoutes () {
     this.registered = true
-    this.routeTable.reverse().forEach((r) => {
-      this._registerRoute(r)
-    })
+    let register = ::this._registerRoute
+    
+    if (! this.config.staticRoutesInSession) {
+      this._staticStack.forEach(register)
+    }
+    let sessionStoreName = this.config.sessionStoreName
+    if(this._sessionMiddleware[sessionStoreName]) {
+      let m = this._sessionMiddleware[sessionStoreName]
+      m.route = await m.route()
+      register(m)
+    } else if (sessionStoreName) {
+      this.log.warn(`No sessions enabled: sessionStoreName ${sessionStoreName} configured but not registered: (${_.keys(this._sessionMiddleware)})`)
+    }
+    if (this.config.staticRoutesInSession) {
+      this._staticStack.forEach(register)
+    }
+    
+    this._middlewareStack.forEach(register)
+    this._routeTable.reverse().forEach(register)
   } 
 
   _registerRoute(r) {
     if(_.isString(r.route)) {
-      this.log.debug('Adding route', r.method, r.route)
+      this.log.debug('Registering route', r.method, r.route)
       this.expressApp[r.method](r.route, r.handler)
     } else {
-      this.log.debug('Adding middleware')
+      this.log.debug('Registering middleware', r.name ? r.name : "")
       this.expressApp[r.method](r.route)
     }
   }
