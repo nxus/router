@@ -19,14 +19,13 @@ class RouterSessions extends NxusModule {
   constructor(app) {
     super(app)
 
-    let settings = this.config
-    // TODO move this to router-sessions-file - but need access EARLY
-    settings.store = new FileStore({path: './.tmp/sessions'})
-    settings.logFn = application.log.debug
-
-    router.default('middleware', expressSession(settings))
+    router.default().sessionMiddleware(this._sessionName(), ::this._createSession )
   }
 
+  _sessionName() {
+    return 'file-store-session'
+  }
+  
   _defaultConfig() {
     return {
       cookie: {
@@ -37,6 +36,17 @@ class RouterSessions extends NxusModule {
       resave: true,
       saveUninitialized: true,
     }
+  }
+
+  async _createSession() {
+    let settings = this.config
+    settings.logFn = application.log.debug
+    settings.store = await this._createStore(settings)
+    return expressSession(settings)
+  }
+
+  _createStore() {
+    return new FileStore({path: './.tmp/sessions'})
   }
 
 };
