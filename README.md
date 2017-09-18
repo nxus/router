@@ -16,6 +16,14 @@ In your Nxus application:
 
     > npm install nxus-router --save
 
+### Configuration Options
+
+      'router': {
+        'staticRoutesInSession': false, // Should static routes use sessions
+        'sessionStoreName': 'file-store-session', // name of a registered session store name
+        'bodyParserJsonOptions': {'limit': '1mb'} // Config options for body parser json handling
+      }
+
 ### Usage
 
 #### Defining a route
@@ -68,6 +76,15 @@ Returns the Express App instance.
 
 Returns **Instance** ExpressJs app instance.
 
+#### sessionMiddleware
+
+Sets the middleware handler for sessions, first in the configured stack
+
+**Parameters**
+
+-   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** If config names a session handler, only that name will be accepted
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+
 #### middleware
 
 Adds a middleware handler to the internal routing table passed to Express
@@ -76,7 +93,7 @@ Adds a middleware handler to the internal routing table passed to Express
 
 -   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route or the handler for all routes
 -   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
--   `method` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** optional HTTP method, defaults to all ('use')
+-   `method` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** optional HTTP method, defaults to all ('use') (optional, default `'use'`)
 
 #### route
 
