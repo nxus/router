@@ -19,6 +19,15 @@
  *         'bodyParserJsonOptions': {'limit': '1mb'} // Config options for body parser json handling
  *       }
  * 
+ * Session store settings (like cookie maxAge, domain) are set per-session-store, e.g.
+ * 
+ *       'waterline_sessions': {
+ *         'cookie': {
+ *           'maxAge': 86400000,
+ *           'domain': '.example.com'
+ *         }
+ *       }
+ * 
  * ## Usage
  * 
  * ### Defining a route
