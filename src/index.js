@@ -1,62 +1,63 @@
 /**
  * # Router Module
- * 
+ *
  * [![Build Status](https://travis-ci.org/nxus/router.svg?branch=master)](https://travis-ci.org/nxus/router)
- * 
+ *
  * The Nxus router is an Express compatible web server and router for Nxus applications.
- * 
+ *
  * ## Installation
- * 
+ *
  * In your Nxus application:
- * 
+ *
  *     > npm install nxus-router --save
- * 
+ *
  * ## Configuration Options
- * 
+ *
  *       'router': {
  *         'staticRoutesInSession': false, // Should static routes use sessions
  *         'sessionStoreName': 'file-store-session', // name of a registered session store name
- *         'bodyParserJsonOptions': {'limit': '1mb'} // Config options for body parser json handling
+ *         'bodyParserJsonOptions': {'limit': '1mb'}, // Config options for body parser json handling
+ *         'bodyParserUrlEncodeOptions': {extended: true, limit: "1mb"}  // Config options for body parser urlencoded form handling
  *       }
- * 
+ *
  * Session store settings (like cookie maxAge, domain) are set per-session-store, e.g.
- * 
+ *
  *       'waterline_sessions': {
  *         'cookie': {
  *           'maxAge': 86400000,
  *           'domain': '.example.com'
  *         }
  *       }
- * 
+ *
  * ## Usage
- * 
+ *
  * ### Defining a route
- * 
+ *
  *     import {router} from 'nxus-router'
- * 
+ *
  *     router.route('/', (req, res) => {
  *       res.send('Hello World')
  *     })
- * 
+ *
  * Alternatively, you can specify a HTTP method:
- * 
+ *
  *     router.route('GET', '/', (req, res) => {
  *       res.send('Hello World')
  *     })
- * 
+ *
  * ### Adding Express/connect middleware
- * 
+ *
  *     router.middleware((req, res) => {
  *       res.status(404).send('Nothing to see here')
  *     })
- * 
+ *
  * ### Adding static files/directories
- * 
+ *
  *     router.staticRoute("/my-prefix", myPath)
- * 
+ *
  * For example, `myFile.txt` in `myPath` is then available at the url `/my-prefix/myFile.txt`
- * 
- * 
+ *
+ *
  */
 
 'use strict'
@@ -103,6 +104,10 @@ class Router extends NxusModule {
       sessionStoreName: 'file-store-session',
       bodyParserJsonOptions: {
         limit: "1mb"
+      },
+      bodyParserUrlEncodeOptions: {
+        extended: true,
+        limit: "1mb"
       }
     }
   }
@@ -115,9 +120,9 @@ class Router extends NxusModule {
     this.expressApp = express()
 
     //Setup express app
-    
+
     this.expressApp.use(compression())
-    this.expressApp.use(bodyParser.urlencoded({ extended: true }))
+    this.expressApp.use(bodyParser.urlencoded(this.config.bodyParserUrlEncodeOptions))
     this.expressApp.use(bodyParser.json(this.config.bodyParserJsonOptions))
     if(application.config.NODE_ENV != 'production') {
       this.expressApp.use((req, res, next) => {
@@ -220,7 +225,7 @@ class Router extends NxusModule {
   async _registerRoutes () {
     this.registered = true
     let register = ::this._registerRoute
-    
+
     if (! this.config.staticRoutesInSession) {
       this._staticStack.forEach(register)
     }
@@ -235,10 +240,10 @@ class Router extends NxusModule {
     if (this.config.staticRoutesInSession) {
       this._staticStack.forEach(register)
     }
-    
+
     this._middlewareStack.forEach(register)
     this._routeTable.reverse().forEach(register)
-  } 
+  }
 
   _registerRoute(r) {
     if(_.isString(r.route)) {
