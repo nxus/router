@@ -17,7 +17,9 @@
  *         'staticRoutesInSession': false, // Should static routes use sessions
  *         'sessionStoreName': 'file-store-session', // name of a registered session store name
  *         'bodyParserJsonOptions': {'limit': '1mb'}, // Config options for body parser json handling
- *         'bodyParserUrlEncodeOptions': {extended: true, limit: "1mb"}  // Config options for body parser urlencoded form handling
+ *         'bodyParserUrlEncodeOptions': {extended: true, limit: "1mb"}  // Config options for body parser urlencoded form handling,
+ *         'bodyParserRawRoutes': ['/route'] // Use raw instead of json processing for these routes
+ *         'bodyParserRawOptions': {'type': 'application/json'}  // Config options for raw body parser routes,
  *       }
  *
  * Session store settings (like cookie maxAge, domain) are set per-session-store, e.g.
@@ -108,6 +110,9 @@ class Router extends NxusModule {
       bodyParserUrlEncodeOptions: {
         extended: true,
         limit: "1mb"
+      },
+      bodyParserRawOptions: {
+        type: 'application/json'
       }
     }
   }
@@ -121,9 +126,19 @@ class Router extends NxusModule {
 
     //Setup express app
 
+    let jsonParser = bodyParser.json(this.config.bodyParserJsonOptions)
+    let rawParser = bodyParser.raw(this.config.bodyParserRawOptions)
+    let rawRoutes = this.config.bodyParserRawRoutes
+  
     this.expressApp.use(compression())
     this.expressApp.use(bodyParser.urlencoded(this.config.bodyParserUrlEncodeOptions))
-    this.expressApp.use(bodyParser.json(this.config.bodyParserJsonOptions))
+    this.expressApp.use((req, res, next) => {
+      if (rawRoutes.includes(req.originalUrl)) {
+        rawParser(req, res, next)
+      } else {
+        jsonParser(req, res, next)
+      }
+    })
     if(application.config.NODE_ENV != 'production') {
       this.expressApp.use((req, res, next) => {
         res.set('Connection', 'close') //need to turn this off on production environments
