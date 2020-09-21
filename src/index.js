@@ -113,7 +113,8 @@ class Router extends NxusModule {
       },
       bodyParserRawOptions: {
         type: 'application/json'
-      }
+      },
+      bodyParserRawRoutes: []
     }
   }
 
