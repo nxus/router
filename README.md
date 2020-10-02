@@ -22,7 +22,9 @@ In your Nxus application:
         'staticRoutesInSession': false, // Should static routes use sessions
         'sessionStoreName': 'file-store-session', // name of a registered session store name
         'bodyParserJsonOptions': {'limit': '1mb'}, // Config options for body parser json handling
-        'bodyParserUrlEncodeOptions': {extended: true, limit: "1mb"}  // Config options for body parser urlencoded form handling
+        'bodyParserUrlEncodeOptions': {extended: true, limit: "1mb"}  // Config options for body parser urlencoded form handling,
+        'bodyParserRawRoutes': ['/route'] // Use raw instead of json processing for these routes
+        'bodyParserRawOptions': {'type': 'application/json'}  // Config options for raw body parser routes,
       }
 
 Session store settings (like cookie maxAge, domain) are set per-session-store, e.g.
@@ -78,7 +80,7 @@ import {router} from 'nxus-router'
 
 Returns the internal routing table.
 
-Returns **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** routes which have been registered
+Returns **[array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** routes which have been registered
 
 #### getExpressApp
 
@@ -92,8 +94,8 @@ Sets the middleware handler for sessions, first in the configured stack
 
 **Parameters**
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If config names a session handler, only that name will be accepted
--   `handler` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+-   `name` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** If config names a session handler, only that name will be accepted
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
 
 #### middleware
 
@@ -101,9 +103,9 @@ Adds a middleware handler to the internal routing table passed to Express
 
 **Parameters**
 
--   `route` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route or the handler for all routes
--   `handler` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
--   `method` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** optional HTTP method, defaults to all ('use') (optional, default `'use'`)
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route or the handler for all routes
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+-   `method` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** optional HTTP method, defaults to all ('use') (optional, default `'use'`)
 
 #### route
 
@@ -111,9 +113,9 @@ Adds a route to express.
 
 **Parameters**
 
--   `method` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
--   `route` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
--   `handler` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
+-   `method` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)?** Either 'get', 'post', 'put' or 'delete'. Defaults to 'get'.
+-   `route` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A URL route.
+-   `handler` **[function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** An ExpressJs type callback to handle the route.
 
 #### staticRoute
 
@@ -121,5 +123,5 @@ Adds a path to serve static files.
 
 **Parameters**
 
--   `prefix` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The path at which the static files will be accessible. For example: "/js"
--   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** A fully resolved path.
+-   `prefix` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** The path at which the static files will be accessible. For example: "/js"
+-   `path` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** A fully resolved path.
